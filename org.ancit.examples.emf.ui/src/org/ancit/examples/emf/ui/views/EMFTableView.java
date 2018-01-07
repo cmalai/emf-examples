@@ -2,6 +2,8 @@ package org.ancit.examples.emf.ui.views;
 
 import org.ancit.examples.emf.edit.extensions.AddressbookItemProviderAdapterFactoryExtension;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
@@ -21,20 +23,39 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
+import addressbook.AddressbookPackage;
 import addressbook.Group;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 
 public class EMFTableView extends ViewPart implements ISelectionListener {
 	private Text txtGroupname;
 	private Table table;
 	private TableViewer tableViewer;
-	
+
 	private ComposedAdapterFactory adapterFactory;
 	private AdapterFactoryEditingDomain editingDomain;
+	private Group group;
+	private Action undoAction;
 
 	public EMFTableView() {
+		createActions();
 		adapterFactory = new ComposedAdapterFactory();
 		adapterFactory.addAdapterFactory(new AddressbookItemProviderAdapterFactoryExtension());
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, new BasicCommandStack());
+	}
+
+	private void createActions() {
+		{
+			undoAction = new Action("Undo") {
+				@Override
+				public void run() {
+					editingDomain.getCommandStack().undo();
+				}
+			};
+		}
 	}
 
 	@Override
@@ -46,13 +67,20 @@ public class EMFTableView extends ViewPart implements ISelectionListener {
 		lblGroupName.setText("Group Name");
 
 		txtGroupname = new Text(parent, SWT.BORDER);
+		txtGroupname.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				Command command = SetCommand.create(editingDomain, group, AddressbookPackage.Literals.GROUP__NAME,
+						txtGroupname.getText());
+				editingDomain.getCommandStack().execute(command);
+			}
+		});
 		txtGroupname.setText("groupName");
 		txtGroupname.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		tableViewer.setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
 		tableViewer.setLabelProvider(new AdapterFactoryLabelProvider(adapterFactory));
-		
+
 		table = tableViewer.getTable();
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
@@ -76,7 +104,13 @@ public class EMFTableView extends ViewPart implements ISelectionListener {
 		// TODO Auto-generated method stub
 
 		getSite().getPage().addSelectionListener(this);
+		fillActionBar();
 
+	}
+
+	private void fillActionBar() {
+		IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+		toolBarManager.add(undoAction);
 	}
 
 	@Override
@@ -92,9 +126,9 @@ public class EMFTableView extends ViewPart implements ISelectionListener {
 			Object object = sSelection.getFirstElement();
 
 			if (object instanceof Group) {
-				Group group = (Group) object;
-				if(group.getName() != null) {
-				txtGroupname.setText(group.getName());
+				group = (Group) object;
+				if (group.getName() != null) {
+					txtGroupname.setText(group.getName());
 				}
 				tableViewer.setInput(group);
 			}
