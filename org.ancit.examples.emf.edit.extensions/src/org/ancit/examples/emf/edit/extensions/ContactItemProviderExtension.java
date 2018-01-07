@@ -1,12 +1,16 @@
 package org.ancit.examples.emf.edit.extensions;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.edit.provider.IItemColorProvider;
+import org.eclipse.emf.edit.provider.ITableItemColorProvider;
 import org.eclipse.emf.edit.provider.ITableItemLabelProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 import addressbook.Contact;
 import addressbook.provider.ContactItemProvider;
 
-public class ContactItemProviderExtension extends ContactItemProvider implements ITableItemLabelProvider {
+public class ContactItemProviderExtension extends ContactItemProvider implements ITableItemLabelProvider, IItemColorProvider, ITableItemColorProvider {
 
 	public ContactItemProviderExtension(AdapterFactory adapterFactory) {
 		super(adapterFactory);
@@ -35,6 +39,20 @@ public class ContactItemProviderExtension extends ContactItemProvider implements
 			break;
 		}
 		return result;
+	}
+	
+	@Override
+	public Object getForeground(Object object, int columnIndex) {
+		return getForeground(object);
+	}
+	
+	@Override
+	public Object getForeground(Object object) {
+		Contact contact = (Contact)object;
+		if(contact.getAddress() == null || contact.getAddress().trim().isEmpty()) {
+			return Display.getDefault().getSystemColor(SWT.COLOR_RED);
+		}
+		return super.getForeground(object);
 	}
 
 }

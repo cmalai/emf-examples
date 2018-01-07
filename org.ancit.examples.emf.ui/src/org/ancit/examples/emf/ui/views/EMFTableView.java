@@ -79,7 +79,7 @@ public class EMFTableView extends ViewPart implements ISelectionListener {
 
 		tableViewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION);
 		tableViewer.setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
-		tableViewer.setLabelProvider(new AdapterFactoryLabelProvider(adapterFactory));
+		tableViewer.setLabelProvider(new AdapterFactoryLabelProvider.ColorProvider(adapterFactory, tableViewer));
 
 		table = tableViewer.getTable();
 		table.setLinesVisible(true);
