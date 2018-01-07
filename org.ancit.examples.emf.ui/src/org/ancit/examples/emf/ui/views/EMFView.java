@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -14,9 +15,17 @@ import org.eclipse.emf.edit.ui.action.CreateChildAction;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
+import org.eclipse.emf.validation.model.EvaluationMode;
+import org.eclipse.emf.validation.service.IBatchValidator;
+import org.eclipse.emf.validation.service.ModelValidationService;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -27,17 +36,15 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
-import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import addressbook.AddressBook;
 import addressbook.AddressbookFactory;
 import addressbook.Contact;
 import addressbook.Group;
 import addressbook.provider.AddressbookItemProviderAdapterFactory;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IToolBarManager;
 
 public class EMFView extends ViewPart {
 	
@@ -112,6 +119,48 @@ public class EMFView extends ViewPart {
 			};
 			saveAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
 		}
+		{
+			validateAction = new Action("Validate") {				@Override
+				public void run() {
+					IBatchValidator validator = ModelValidationService.getInstance()
+							.newValidator(EvaluationMode.BATCH);
+						// include live constraints, also, in batch validation
+						validator.setOption(IBatchValidator.OPTION_INCLUDE_LIVE_CONSTRAINTS, true);
+						// track the validated resources for accurate problem-marker updates
+						validator.setOption(IBatchValidator.OPTION_TRACK_RESOURCES, true);
+						
+						final IStatus status = validator.validate(book);
+						
+						if (status.isOK()) {
+							MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Success",
+								"Success");
+						} else {
+							ListDialog listDialog = new ListDialog(Display.getDefault().getActiveShell());
+							listDialog.setInput(status);
+							listDialog.setContentProvider(new IStructuredContentProvider() {
+								
+								@Override
+								public Object[] getElements(Object inputElement) {
+									if (status != null && status.isMultiStatus() && status == inputElement) {
+										return status.getChildren();
+									} else if (status != null && status == inputElement) {
+										return new Object[] {status};
+									}
+									return new Object[0];
+								}
+							});
+							listDialog.setLabelProvider(new LabelProvider() {
+								public String getText(Object element) {
+									return ((IStatus)element).getMessage();
+								};
+							});
+							
+							listDialog.setBlockOnOpen(true);
+							listDialog.setMessage("Validation Status");
+						}
+				}
+			};
+		}
 	}
 
 	@Override
@@ -132,6 +181,7 @@ public class EMFView extends ViewPart {
 		IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
 		toolBarManager.add(loadAction);
 		toolBarManager.add(saveAction);
+		toolBarManager.add(validateAction);
 		
 	}
 
@@ -157,6 +207,7 @@ public class EMFView extends ViewPart {
 	ExtendedPropertySheetPage propertySheetPage = null;
 	private Action loadAction;
 	private Action saveAction;
+	private Action validateAction;
 	
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {

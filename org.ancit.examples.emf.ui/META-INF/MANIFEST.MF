@@ -10,5 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.event,
  org.ancit.examples.emf.edit,
  org.eclipse.emf.edit.ui,
- org.ancit.examples.emf.edit.extensions
+ org.ancit.examples.emf.edit.extensions,
+ org.eclipse.emf.validation,
+ org.eclipse.emf.validation.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-9

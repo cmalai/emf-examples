@@ -72,5 +72,58 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.emf.validation.constraintProviders">
+      <category
+            id="org.ancit.examples.emf.ui.validationCategory"
+            name="AddressBook Validation">
+      </category>
+      <constraintProvider
+            cache="true">
+         <package
+               namespaceUri="http://addressbook/1.0">
+         </package>
+         <constraints
+               categories="org.ancit.examples.emf.ui.validationCategory">
+            <constraint
+                  class="org.ancit.examples.emf.ui.validations.NonEmptyNameConstraint"
+                  id="org.ancit.examples.emf.ui.NameNotEmpty"
+                  isEnabledByDefault="true"
+                  lang="Java"
+                  mode="Batch"
+                  name="Non Empty Name"
+                  severity="ERROR"
+                  statusCode="1">
+               <message>
+                  Object {0} doesnt have a name.
+               </message>
+            </constraint>
+         </constraints>
+      </constraintProvider>
+   </extension>
+   <extension
+         point="org.eclipse.emf.validation.constraintBindings">
+      <clientContext
+            default="true"
+            id="org.ancit.examples.emf.ui.addressbookContext">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.emf.ecore.EObject">
+            </instanceof>
+         </enablement>
+      </clientContext>
+      <binding
+            context="org.ancit.examples.emf.ui.addressbookContext">
+         <category
+               ref="org.ancit.examples.emf.ui.validationCategory">
+         </category>
+      </binding>
+   </extension>
+   <extension
+         point="org.eclipse.emf.validation.ui.UIRegisteredClientContext">
+      <clientContext
+            id="org.ancit.examples.emf.ui.addressbookContext">
+      </clientContext>
+   </extension>
 
 </plugin>

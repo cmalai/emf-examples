@@ -93,7 +93,9 @@ public class EMFTableView extends ViewPart implements ISelectionListener {
 
 			if (object instanceof Group) {
 				Group group = (Group) object;
+				if(group.getName() != null) {
 				txtGroupname.setText(group.getName());
+				}
 				tableViewer.setInput(group);
 			}
 
