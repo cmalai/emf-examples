@@ -1,12 +1,22 @@
 package org.ancit.examples.emf.ui.views;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
+import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.ui.action.CreateChildAction;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
 
@@ -24,21 +34,49 @@ public class EMFView extends ViewPart {
 
 	private ComposedAdapterFactory adapterFactory;
 
+	private TreeViewer treeViewer;
+
+	private AddressBook book;
+
+	private AdapterFactoryEditingDomain editingDomain;
+
 	public EMFView() {
 		adapterFactory = new ComposedAdapterFactory();
 		adapterFactory.addAdapterFactory(new AddressbookItemProviderAdapterFactory());
+		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, new BasicCommandStack());
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-		TreeViewer treeViewer = new TreeViewer(parent);
+		treeViewer = new TreeViewer(parent);
 		treeViewer.setContentProvider(new AdapterFactoryContentProvider(adapterFactory));
 		treeViewer.setLabelProvider(new AdapterFactoryLabelProvider(adapterFactory));
 		treeViewer.setInput(initiateModel());
+		
+		hookContextMenu();
+	}
+
+	private void hookContextMenu() {
+		MenuManager menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			
+			@Override
+			public void menuAboutToShow(IMenuManager manager) {
+				Collection<?> newChildDescriptors = editingDomain.getNewChildDescriptors(book, null);
+				for (Object object : newChildDescriptors) {
+					CreateChildAction action = new CreateChildAction(editingDomain, new StructuredSelection(book), object);
+					manager.add(action);
+				}
+			}
+		});
+		
+		Menu contextMenu = menuMgr.createContextMenu(treeViewer.getTree());
+		treeViewer.getTree().setMenu(contextMenu);
 	}
 
 	private AddressBook initiateModel() {
-		AddressBook book = AddressbookFactory.eINSTANCE.createAddressBook();
+		book = AddressbookFactory.eINSTANCE.createAddressBook();
 		book.setName("Malai's World");
 		
 		Group group = AddressbookFactory.eINSTANCE.createGroup();
