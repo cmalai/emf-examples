@@ -177,13 +177,40 @@ public interface AddressbookPackage extends EPackage {
 	int CONTACT__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Address</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTACT__ADDRESS = 1;
+
+	/**
+	 * The feature id for the '<em><b>Mobileno</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTACT__MOBILENO = 2;
+
+	/**
+	 * The feature id for the '<em><b>Emailid</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTACT__EMAILID = 3;
+
+	/**
 	 * The number of structural features of the '<em>Contact</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CONTACT_FEATURE_COUNT = 1;
+	int CONTACT_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Contact</em>' class.
@@ -292,6 +319,39 @@ public interface AddressbookPackage extends EPackage {
 	EAttribute getContact_Name();
 
 	/**
+	 * Returns the meta object for the attribute '{@link addressbook.Contact#getAddress <em>Address</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Address</em>'.
+	 * @see addressbook.Contact#getAddress()
+	 * @see #getContact()
+	 * @generated
+	 */
+	EAttribute getContact_Address();
+
+	/**
+	 * Returns the meta object for the attribute '{@link addressbook.Contact#getMobileno <em>Mobileno</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Mobileno</em>'.
+	 * @see addressbook.Contact#getMobileno()
+	 * @see #getContact()
+	 * @generated
+	 */
+	EAttribute getContact_Mobileno();
+
+	/**
+	 * Returns the meta object for the attribute '{@link addressbook.Contact#getEmailid <em>Emailid</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Emailid</em>'.
+	 * @see addressbook.Contact#getEmailid()
+	 * @see #getContact()
+	 * @generated
+	 */
+	EAttribute getContact_Emailid();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -391,6 +451,30 @@ public interface AddressbookPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CONTACT__NAME = eINSTANCE.getContact_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Address</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CONTACT__ADDRESS = eINSTANCE.getContact_Address();
+
+		/**
+		 * The meta object literal for the '<em><b>Mobileno</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CONTACT__MOBILENO = eINSTANCE.getContact_Mobileno();
+
+		/**
+		 * The meta object literal for the '<em><b>Emailid</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CONTACT__EMAILID = eINSTANCE.getContact_Emailid();
 
 	}
 

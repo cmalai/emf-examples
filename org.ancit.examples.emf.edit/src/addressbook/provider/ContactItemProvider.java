@@ -61,6 +61,9 @@ public class ContactItemProvider
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
+			addAddressPropertyDescriptor(object);
+			addMobilenoPropertyDescriptor(object);
+			addEmailidPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -79,6 +82,72 @@ public class ContactItemProvider
 				 getString("_UI_Contact_name_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_Contact_name_feature", "_UI_Contact_type"),
 				 AddressbookPackage.Literals.CONTACT__NAME,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Address feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addAddressPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Contact_address_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Contact_address_feature", "_UI_Contact_type"),
+				 AddressbookPackage.Literals.CONTACT__ADDRESS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Mobileno feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addMobilenoPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Contact_mobileno_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Contact_mobileno_feature", "_UI_Contact_type"),
+				 AddressbookPackage.Literals.CONTACT__MOBILENO,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Emailid feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addEmailidPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Contact_emailid_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Contact_emailid_feature", "_UI_Contact_type"),
+				 AddressbookPackage.Literals.CONTACT__EMAILID,
 				 true,
 				 false,
 				 false,
@@ -126,6 +195,9 @@ public class ContactItemProvider
 
 		switch (notification.getFeatureID(Contact.class)) {
 			case AddressbookPackage.CONTACT__NAME:
+			case AddressbookPackage.CONTACT__ADDRESS:
+			case AddressbookPackage.CONTACT__MOBILENO:
+			case AddressbookPackage.CONTACT__EMAILID:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

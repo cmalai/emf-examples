@@ -190,6 +190,33 @@ public class AddressbookPackageImpl extends EPackageImpl implements AddressbookP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getContact_Address() {
+		return (EAttribute)contactEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getContact_Mobileno() {
+		return (EAttribute)contactEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getContact_Emailid() {
+		return (EAttribute)contactEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public AddressbookFactory getAddressbookFactory() {
 		return (AddressbookFactory)getEFactoryInstance();
 	}
@@ -224,6 +251,9 @@ public class AddressbookPackageImpl extends EPackageImpl implements AddressbookP
 
 		contactEClass = createEClass(CONTACT);
 		createEAttribute(contactEClass, CONTACT__NAME);
+		createEAttribute(contactEClass, CONTACT__ADDRESS);
+		createEAttribute(contactEClass, CONTACT__MOBILENO);
+		createEAttribute(contactEClass, CONTACT__EMAILID);
 	}
 
 	/**
@@ -267,6 +297,9 @@ public class AddressbookPackageImpl extends EPackageImpl implements AddressbookP
 
 		initEClass(contactEClass, Contact.class, "Contact", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getContact_Name(), ecorePackage.getEString(), "name", null, 1, 1, Contact.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getContact_Address(), ecorePackage.getEString(), "address", null, 0, 1, Contact.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getContact_Mobileno(), ecorePackage.getEString(), "mobileno", null, 0, 1, Contact.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getContact_Emailid(), ecorePackage.getEString(), "emailid", null, 0, 1, Contact.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
