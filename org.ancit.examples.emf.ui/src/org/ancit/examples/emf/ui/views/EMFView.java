@@ -10,6 +10,7 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.action.CreateChildAction;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -19,6 +20,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import addressbook.AddressBook;
 import addressbook.AddressbookFactory;
@@ -53,6 +56,8 @@ public class EMFView extends ViewPart {
 		treeViewer.setLabelProvider(new AdapterFactoryLabelProvider(adapterFactory));
 		treeViewer.setInput(initiateModel());
 		
+		getSite().setSelectionProvider(treeViewer);
+		
 		hookContextMenu();
 	}
 
@@ -73,6 +78,20 @@ public class EMFView extends ViewPart {
 		
 		Menu contextMenu = menuMgr.createContextMenu(treeViewer.getTree());
 		treeViewer.getTree().setMenu(contextMenu);
+	}
+	
+	ExtendedPropertySheetPage propertySheetPage = null;
+	
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if(adapter.equals(IPropertySheetPage.class)) {
+			if(propertySheetPage == null) {
+				propertySheetPage = new ExtendedPropertySheetPage(editingDomain);
+				propertySheetPage.setPropertySourceProvider(new AdapterFactoryContentProvider(adapterFactory));
+			}
+			return (T) propertySheetPage;
+		}
+		return super.getAdapter(adapter);
 	}
 
 	private AddressBook initiateModel() {

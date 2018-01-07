@@ -41,6 +41,13 @@
                relationship="left"
                relative="org.eclipse.ui.editorss">
          </view>
+         <view
+               id="org.eclipse.ui.views.PropertySheet"
+               minimized="false"
+               ratio="0.3f"
+               relationship="right"
+               relative="org.ancit.examples.emf.ui.views.EMFView">
+         </view>
       </perspectiveExtension>
    </extension>
    <extension
