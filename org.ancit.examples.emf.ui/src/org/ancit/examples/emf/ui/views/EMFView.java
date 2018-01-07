@@ -1,10 +1,13 @@
 package org.ancit.examples.emf.ui.views;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.action.CreateChildAction;
@@ -16,9 +19,14 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
@@ -28,6 +36,8 @@ import addressbook.AddressbookFactory;
 import addressbook.Contact;
 import addressbook.Group;
 import addressbook.provider.AddressbookItemProviderAdapterFactory;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 
 public class EMFView extends ViewPart {
 	
@@ -44,9 +54,64 @@ public class EMFView extends ViewPart {
 	private AdapterFactoryEditingDomain editingDomain;
 
 	public EMFView() {
+		createActions();
 		adapterFactory = new ComposedAdapterFactory();
 		adapterFactory.addAdapterFactory(new AddressbookItemProviderAdapterFactory());
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, new BasicCommandStack());
+	}
+	private void createActions() {
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+		{
+			loadAction = new Action("Load") {				@Override
+				public void run() {
+					FileDialog fDialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
+					String filePath = fDialog.open();
+					
+					if(filePath != null) {
+						try {
+							Resource resource = editingDomain.getResourceSet().createResource(URI.createFileURI(filePath));
+							resource.load(null);
+							book = (AddressBook) resource.getContents().get(0);
+							treeViewer.setInput(book);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+				}
+			};
+			loadAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UP));
+		}
+		{
+			saveAction = new Action("Save") {				@Override
+				public void run() {
+					if(book.eResource() == null) {
+						FileDialog fDialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
+						String filePath = fDialog.open();
+						
+						if(filePath != null) {
+							try {
+								Resource resource = editingDomain.getResourceSet().createResource(URI.createFileURI(filePath));
+								resource.getContents().add(book);
+								resource.save(null);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					} else {
+						try {
+							book.eResource().save(null);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			};
+			saveAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
+		}
 	}
 
 	@Override
@@ -58,7 +123,16 @@ public class EMFView extends ViewPart {
 		
 		getSite().setSelectionProvider(treeViewer);
 		
+		fillActionBars();
 		hookContextMenu();
+	}
+
+	private void fillActionBars() {
+		getViewSite().getActionBars().getMenuManager();
+		IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+		toolBarManager.add(loadAction);
+		toolBarManager.add(saveAction);
+		
 	}
 
 	private void hookContextMenu() {
@@ -81,6 +155,8 @@ public class EMFView extends ViewPart {
 	}
 	
 	ExtendedPropertySheetPage propertySheetPage = null;
+	private Action loadAction;
+	private Action saveAction;
 	
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
